@@ -7,31 +7,26 @@ class MoviesController < ApplicationController
     end
   
     def index
-      # @movies = Movie.all
-      
-      sortby = params[:sort_by]
       @all_ratings = Movie.get_all_ratings
-      
+      # define two parameters
+      sortby = params[:sort_by]
       filter = params[:ratings]
-
+      
       if filter != nil
-        # @movies = Movie.with_ratings(filter)
-        # return
-        session[:filter_ratings] = filter
+        session[:filter] = filter
       end
       
       if sortby != nil
         session[:order] = sortby
       end
-
-      if sortby == nil and filter == nil and (session[:filter_ratings] != nil or session[:order] != nil)
-        filter = session[:filter_ratings]
+      
+      if sortby == nil and filter == nil and !(session[:filter] == nil and session[:order] == nil)
+        filter = session[:filter]
         sortby = session[:order]
-        flash.keep
-        redirect_to movies_path({sort_by: order, ratings: filter_ratings})
+        redirect_to movies_path({sort_by: sortby, ratings: filter})
       end
       sortby = session[:order]
-      filter = session[:filter_ratings]
+      filter = session[:filter]
       
       if sortby == nil
         @movies = Movie.all()
