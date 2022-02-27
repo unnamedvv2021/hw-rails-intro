@@ -24,7 +24,7 @@ class MoviesController < ApplicationController
         session[:order] = sortby
       end
 
-      if order == nil and filter == nil and (session[:filter_ratings] != nil or session[:order] != nil)
+      if sortby == nil and filter == nil and (session[:filter_ratings] != nil or session[:order] != nil)
         filter = session[:filter_ratings]
         sortby = session[:order]
         flash.keep
