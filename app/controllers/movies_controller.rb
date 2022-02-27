@@ -7,7 +7,18 @@ class MoviesController < ApplicationController
     end
   
     def index
-      @movies = Movie.all
+      # @movies = Movie.all
+      sortby = params[:sort_by]
+      if sortby == nil
+        @movies = Movie.all()
+      else
+        @movies = Movie.all().order(sortby)
+        if sortby == 'title'
+          @table_title = 'bg-warning'
+        elsif sortby == 'release_date'
+          @table_date = 'bg-warning'
+        end
+      end
     end
   
     def new
