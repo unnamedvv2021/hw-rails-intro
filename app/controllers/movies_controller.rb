@@ -8,7 +8,17 @@ class MoviesController < ApplicationController
   
     def index
       # @movies = Movie.all
+      
       sortby = params[:sort_by]
+      @all_ratings = Movie.get_all_ratings
+      
+      filter = params[:ratings]
+
+      if filter != nil
+        @movies = Movie.with_ratings(filter)
+        return
+      end
+      
       if sortby == nil
         @movies = Movie.all()
       else
