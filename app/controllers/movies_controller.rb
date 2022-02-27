@@ -15,9 +15,23 @@ class MoviesController < ApplicationController
       filter = params[:ratings]
 
       if filter != nil
-        @movies = Movie.with_ratings(filter)
-        return
+        # @movies = Movie.with_ratings(filter)
+        # return
+        session[:filter_ratings] = filter
       end
+      
+      if sortby != nil
+        session[:order] = sortby
+      end
+
+      if order == nil and filter == nil and (session[:filter_ratings] != nil or session[:order] != nil)
+        filter = session[:filter_ratings]
+        sortby = session[:order]
+        flash.keep
+        redirect_to movies_path({sort_by: order, ratings: filter_ratings})
+      end
+      sortby = session[:order]
+      filter = session[:filter_ratings]
       
       if sortby == nil
         @movies = Movie.all()
@@ -28,6 +42,9 @@ class MoviesController < ApplicationController
         elsif sortby == 'release_date'
           @table_date = 'bg-warning'
         end
+      end
+      if filter != nil
+        @movies = @movies.select{ |movie| filter.include? movie.rating}
       end
     end
   
