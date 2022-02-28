@@ -7,42 +7,40 @@ class MoviesController < ApplicationController
     end
   
     def index
+      # session.clear
       @all_ratings = Movie.get_all_ratings
       # define two parameters
       sortby = params[:sort_by]
       filter = params[:ratings]
-      
+      # update the filter and sortby in the session
       if filter != nil
         session[:filter] = filter
       end
-      
       if sortby != nil
-        session[:order] = sortby
+        session[:sortby] = sortby
       end
-      
-      if sortby == nil and filter == nil and !(session[:filter] == nil and session[:order] == nil)
-        filter = session[:filter]
-        sortby = session[:order]
+      # update the filter and sortby value in this function
+      filter = session[:filter]
+      sortby = session[:sortby]
+      # 
+      if sortby == nil and filter == nil and (session[:sortby] != nil or session[:filter] != nil)
         redirect_to movies_path({sort_by: sortby, ratings: filter})
       end
-      sortby = session[:order]
-      filter = session[:filter]
       
-      if sortby == nil
-        @movies = Movie.all()
-      else
-        @movies = Movie.all().order(sortby)
-        if sortby == 'title'
-          @table_title = 'bg-warning'
-        elsif sortby == 'release_date'
-          @table_date = 'bg-warning'
-        end
+      @movies = Movie.all().order(sortby)
+      if sortby == 'title'
+        @table_title = 'bg-warning'
+      elsif sortby == 'release_date'
+        @table_date = 'bg-warning'
       end
+      
+      
       if filter != nil
+        
         @movies = @movies.select{ |movie| filter.include? movie.rating}
       end
     end
-  
+    
     def new
       # default: render 'new' template
     end
@@ -77,4 +75,5 @@ class MoviesController < ApplicationController
     def movie_params
       params.require(:movie).permit(:title, :rating, :description, :release_date)
     end
+    
   end
